@@ -8,15 +8,17 @@ import { CreateUserDto } from './user.dto';
 export class UsersService {
     constructor(@InjectModel(User.name) private readonly userModel: Model<UserDocument>) { }
 
+    async getAllUsers() {
+        return await this.userModel.find();
+    }
+
     async signup(user: CreateUserDto) {
         try {
             return await new this.userModel({
                 ...user
             }).save()
         } catch (error) {
-            console.log(error);
-            
-        //    throw new BadRequestException('Email already existed')
+           throw new BadRequestException('Email already existed')
         }
     }
 }
