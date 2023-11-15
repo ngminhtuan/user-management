@@ -1,15 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UsersModule } from './common/Users/users.module';
+import { AuthModule } from './common/Auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: '.env',
+      isGlobal: true,
     }),
     MongooseModule.forRoot(process.env.DBSTRING),
-    UsersModule],
+    AuthModule
+  ],
   controllers: [],
   providers: [],
 })
