@@ -17,17 +17,17 @@ export class AuthService {
         const { username, email, password } = user
 
         const hashedPassword = await bcrypt.hash(password, 10)
-        try {
-            const newUser = await this.userModel.create({
-                username,
-                email,
-                password: hashedPassword
-            })
-            const token = this.jwtService.sign({ id: newUser._id })
-            return { token }
-        } catch (error) {
-            throw new BadRequestException('Email already existed')
-        }
+
+        const existedUser = await this.userModel.find({ email })
+        if (existedUser.length > 0) throw new BadRequestException('Email already existed')
+        const newUser = await this.userModel.create({
+            username,
+            email,
+            password: hashedPassword
+        })
+        const token = this.jwtService.sign({ id: newUser._id }, {secret: process.env.JWT_SECRET})
+        return { token }
+
     }
 
     async signin(user: SigninDto): Promise<{ token: string }> {
@@ -35,17 +35,17 @@ export class AuthService {
 
         const signinUser = await this.userModel.findOne({ email });
 
-        if(!signinUser) {
+        if (!signinUser) {
             throw new UnauthorizedException("Invalid email")
         }
 
         const isPasswordMatched = await bcrypt.compare(password, signinUser.password);
 
-        if(!isPasswordMatched) {
+        if (!isPasswordMatched) {
             throw new UnauthorizedException("Invalid password")
         }
 
-        const token = this.jwtService.sign({ id: signinUser._id })
-            return { token }
+        const token = this.jwtService.sign({ id: signinUser._id }, {secret: process.env.JWT_SECRET})
+        return { token }
     }
 }

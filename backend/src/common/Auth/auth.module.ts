@@ -11,17 +11,24 @@ import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
-    PassportModule.register({defaultStrategy: 'jwt'}),
-    JwtModule.register({
-      global: true,
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.JWT_EXPIRES},
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.registerAsync({
+      // global: true,
+      // secret: process.env.JWT_SECRET,
+      // signOptions: { expiresIn: process.env.JWT_EXPIRES },
+      useFactory: (configService: ConfigService) => {
+        return {
+          global: true,
+          secret: configService.get<string>(process.env.JWT_SECRET),
+          signOptions: { expiresIn: process.env.JWT_EXPIRES },
+        }
+      },
+      inject: [ConfigService]
     }),
-    MongooseModule.forFeature([{name: User.name, schema: UserSchema}]), 
-    UsersModule
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
   exports: [JwtStrategy, PassportModule]
 })
-export class AuthModule {}
+export class AuthModule { }
