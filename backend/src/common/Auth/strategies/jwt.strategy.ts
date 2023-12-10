@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy, ExtractJwt } from "passport-jwt";
-import { User } from "../Users/user.schema";
+import { User } from "../../Users/schemas/user.schema";
 import { Model } from "mongoose";
 
 

@@ -11,7 +11,7 @@ import { UsersModule } from './common/Users/users.module';
       isGlobal: true,
     }),
     MongooseModule.forRoot(process.env.DBSTRING),
-    UsersModule
+    AuthModule
   ],
   controllers: [],
   providers: [],
